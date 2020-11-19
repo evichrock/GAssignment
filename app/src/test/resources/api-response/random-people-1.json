@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "user": {
+        "gender": "female",
+        "name": {
+          "title": "miss",
+          "first": "letitia",
+          "last": "turner"
+        },
+        "location": {
+          "street": "4288 central st",
+          "city": "santaquin",
+          "state": "idaho",
+          "zip": "20679"
+        },
+        "email": "letitia.turner62@example.com",
+        "username": "bluemeercat697",
+        "password": "trout",
+        "salt": "oGMtgIdD",
+        "md5": "87ca24e230a7d0b23dfba438fa7bedad",
+        "sha1": "3b6078ac9fa3fc8817b60457e969b5ffde71fae2",
+        "sha256": "4f8bd58e4694ff98dd748a06b093532f0a644af00f3f3de63cf0fbd42245c2b4",
+        "registered": "1141332246",
+        "dob": "357248193",
+        "phone": "(253)-468-6506",
+        "cell": "(978)-753-9599",
+        "SSN": "518-73-3525",
+        "picture": "http://api.randomuser.me/portraits/women/70.jpg"
+      },
+      "seed": "bc2f61ba2af5a212",
+      "version": "0.4"
+    }
+  ]
+}

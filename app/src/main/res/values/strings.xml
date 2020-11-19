@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GjekAssignment</string>
+
+    <string name="name_title">Hi, My name is</string>
+    <string name="name_display_placeholders">%s %s</string>
+
+    <string name="email_title">My email address is</string>
+    <string name="dob_title">My birthday is</string>
+    <string name="address_title">My address is</string>
+    <string name="phone_title">My phone number is</string>
+    <string name="password_title">My password is</string>
+</resources>
