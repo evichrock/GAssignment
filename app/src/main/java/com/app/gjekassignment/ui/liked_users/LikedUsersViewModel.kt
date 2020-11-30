@@ -5,12 +5,13 @@ import com.app.gjekassignment.data.Result
 import com.app.gjekassignment.data.User
 import com.app.gjekassignment.data.UsersRepository
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import javax.inject.Inject
 
-class LikedUsersViewModel(private val usersRepository: UsersRepository) : ViewModel() {
+class LikedUsersViewModel @Inject constructor(private val usersRepository: UsersRepository) : ViewModel() {
    
    private val compositeDisposable = CompositeDisposable()
    private var firstLoaded = false
-   
    private var usersLiveData = MutableLiveData<List<User>>()
    private var showLoadingLiveData = MutableLiveData<Boolean>()
    
@@ -20,30 +21,19 @@ class LikedUsersViewModel(private val usersRepository: UsersRepository) : ViewMo
    fun init() {
       if (firstLoaded) return
    
-      compositeDisposable.add(usersRepository.getLikedUsers()
+      firstLoaded = true
+   
+      compositeDisposable += usersRepository.getLikedUsers()
          .doOnSubscribe { showLoadingLiveData.value = true }
-         .doOnEvent { _, _ -> showLoadingLiveData.value = false }
-         .subscribe({ result ->
+         .doOnEvent { _, _ -> showLoadingLiveData.value = false }.subscribe({ result ->
             when (result) {
                is Result.Success -> usersLiveData.value = result.data
                is Result.Failure -> result.error
             }
-         }, {}))
+         }, {})
    }
    
    override fun onCleared() {
       compositeDisposable.clear()
-   }
-   
-   class Factory(private val peopleRepository: UsersRepository) : ViewModelProvider.Factory {
-      override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-         return try {
-            modelClass.getConstructor(UsersRepository::class.java).newInstance(peopleRepository)
-         } catch (e: NoSuchMethodException) {
-            throw RuntimeException("Cannot create an instance of $modelClass", e)
-         } catch (e: SecurityException) {
-            throw RuntimeException("Cannot create an instance of $modelClass", e)
-         }
-      }
    }
 }

@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.DiffUtil
 import com.app.gjekassignment.GjekApp
 import com.app.gjekassignment.data.User
@@ -20,10 +20,13 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), CardStackListener {
     
-    private lateinit var viewModel: UsersViewModel
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by viewModels<UsersViewModel> { viewModelFactory }
+    
     private lateinit var binding: ActivityMainBinding
     private val pb = PublishSubject.create<List<User>>()
     
@@ -31,10 +34,13 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private val cardStackLayoutManager by lazy { CardStackLayoutManager(this, this) }
     
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as GjekApp).appComponent
+            .usersComponent().create().inject(this)
+        
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+    
         cardStackLayoutManager.cardStackSetting.visibleCount = 4
         binding.cardStackView.layoutManager = cardStackLayoutManager
         binding.cardStackView.adapter = adapter
@@ -69,7 +75,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             startActivity(Intent(this, LikedUsersActivity::class.java))
         }
         
-        viewModel = ViewModelProvider(this, UsersViewModel.Factory((application as GjekApp).usersRepository)).get()
         viewModel.getUsersLiveData().observe(this, Observer {
             pb.onNext(it)
         })

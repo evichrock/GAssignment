@@ -1,8 +1,5 @@
 package com.app.gjekassignment.ui
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.*
 import com.app.gjekassignment.OpenForTesting
 import com.app.gjekassignment.data.Result
@@ -11,10 +8,13 @@ import com.app.gjekassignment.data.UsersRepository
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.toObservable
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 @OpenForTesting
-class UsersViewModel(private val usersRepository: UsersRepository) : ViewModel() {
+class UsersViewModel @Inject constructor(private val usersRepository: UsersRepository) : ViewModel() {
    
    private val compositeDisposable = CompositeDisposable()
    private var firstLoaded = false
@@ -29,11 +29,12 @@ class UsersViewModel(private val usersRepository: UsersRepository) : ViewModel()
    fun init() {
       if (firstLoaded) return
    
+      firstLoaded = true
       fetchUsers()
    }
-   
+
    private fun fetchUsers(loadCount: Int = 12, retryCount: Int = 3) {
-      compositeDisposable.add(Observable.range(1, loadCount)
+      compositeDisposable += (1..loadCount).toObservable()
          .doOnSubscribe { showLoadingLiveData.value = true }
          .buffer(2) // call two apis once at a time
          .zipWith<Long, List<Int>>(Observable
@@ -54,7 +55,7 @@ class UsersViewModel(private val usersRepository: UsersRepository) : ViewModel()
    
             if (failures.size > 0 && retryCount > 0)
                fetchUsers(failures.size, retryCount - 1)
-         }, {}))
+         }, {})
    }
    
    fun loadMore() {
@@ -70,17 +71,5 @@ class UsersViewModel(private val usersRepository: UsersRepository) : ViewModel()
    
    override fun onCleared() {
       compositeDisposable.clear()
-   }
-   
-   class Factory(private val peopleRepository: UsersRepository) : ViewModelProvider.Factory {
-      override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-         return try {
-            modelClass.getConstructor(UsersRepository::class.java).newInstance(peopleRepository)
-         } catch (e: NoSuchMethodException) {
-            throw RuntimeException("Cannot create an instance of $modelClass", e)
-         } catch (e: SecurityException) {
-            throw RuntimeException("Cannot create an instance of $modelClass", e)
-         }
-      }
    }
 }

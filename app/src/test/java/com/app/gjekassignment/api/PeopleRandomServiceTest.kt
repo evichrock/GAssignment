@@ -3,7 +3,9 @@ package com.app.gjekassignment.api
 import com.app.gjekassignment.utils.enqueueResponse
 import com.app.gjekassignment.utils.loadJson
 import com.app.gjekassignment.utils.toTypeOf
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.core.IsNull.notNullValue
 import org.junit.After
@@ -22,7 +24,9 @@ class PeopleRandomServiceTest {
    
    private lateinit var service: PeopleRandomService
    private lateinit var mockWebServer: MockWebServer
-   private val gson: Gson = PeopleRandomService.createGsonObject()
+   private val gson: Gson = GsonBuilder()
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .create()
    
    @Before
    fun initService() {

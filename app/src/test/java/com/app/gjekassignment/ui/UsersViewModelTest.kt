@@ -9,6 +9,7 @@ import com.app.gjekassignment.data.User
 import com.app.gjekassignment.data.UsersRepository
 import com.app.gjekassignment.utils.TestUtils
 import com.app.gjekassignment.utils.mock
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.hamcrest.CoreMatchers.`is`
@@ -94,7 +95,7 @@ class UsersViewModelTest {
    @Test
    fun likeUser() {
       val user = TestUtils.createUser()
-      doReturn(Single.just(Result.Success(listOf(1L)))).`when`(usersRepository).addLikedUsers(user)
+      doReturn(Completable.complete()).`when`(usersRepository).addLikedUsers(user)
       val showLoadingObserver = mock<Observer<Boolean>>()
       usersViewModel.getShowLoadingLiveData().observeForever(showLoadingObserver)
       

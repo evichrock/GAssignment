@@ -7,6 +7,7 @@ import com.app.gjekassignment.utils.TestUtils
 import com.app.gjekassignment.utils.loadJson
 import com.app.gjekassignment.utils.mock
 import com.app.gjekassignment.utils.toTypeOf
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -58,7 +59,7 @@ class UsersRepositoryTest {
       val testObserverUsers = usersRepository.addLikedUsers(user).test()
       
       verify(userDao, only()).insertLikedUsers(user)
-      testObserverUsers.assertResult(Result.Success(listOf(0L)))
+      testObserverUsers.assertComplete()
    }
    
    @Test

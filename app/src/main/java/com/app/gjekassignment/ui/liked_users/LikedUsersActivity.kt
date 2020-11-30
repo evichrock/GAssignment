@@ -1,22 +1,27 @@
 package com.app.gjekassignment.ui.liked_users
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.gjekassignment.GjekApp
 import com.app.gjekassignment.databinding.ActivityLikedUsersBinding
+import javax.inject.Inject
 
 class LikedUsersActivity : AppCompatActivity() {
    
-   private lateinit var binding: ActivityLikedUsersBinding
-   private lateinit var viewModel: LikedUsersViewModel
+   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+   private val viewModel by viewModels<LikedUsersViewModel> { viewModelFactory }
    
+   private lateinit var binding: ActivityLikedUsersBinding
    private val adapter by lazy { LikedUsersAdapter() }
    
    override fun onCreate(savedInstanceState: Bundle?) {
+      (applicationContext as GjekApp).appComponent
+         .likedUsersComponent().create().inject(this)
+      
       super.onCreate(savedInstanceState)
       binding = ActivityLikedUsersBinding.inflate(layoutInflater)
       setContentView(binding.root)
@@ -25,7 +30,6 @@ class LikedUsersActivity : AppCompatActivity() {
       binding.rvLikedUsers.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
       binding.rvLikedUsers.adapter = adapter
       
-      viewModel = ViewModelProvider(this, LikedUsersViewModel.Factory((application as GjekApp).usersRepository)).get()
       viewModel.getUsersLiveData().observe(this, Observer {
          adapter.setUsers(it)
       })
