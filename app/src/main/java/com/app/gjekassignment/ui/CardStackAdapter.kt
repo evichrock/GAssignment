@@ -1,18 +1,17 @@
 package com.app.gjekassignment.ui
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Matrix
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.BounceInterpolator
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.app.gjekassignment.GlideApp
 import com.app.gjekassignment.R
 import com.app.gjekassignment.data.User
 import com.app.gjekassignment.databinding.LayoutUserItemBinding
-import com.bumptech.glide.Glide
+import kotlin.collections.ArrayList
 
 class CardStackAdapter(context: Context): RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
    
@@ -25,7 +24,6 @@ class CardStackAdapter(context: Context): RecyclerView.Adapter<CardStackAdapter.
    }
    private val selectedMatrix =  Matrix().apply {
       setScale(0.5F, 0.5F)
-      postTranslate(0F, 0F)
    }
    
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -58,8 +56,8 @@ class CardStackAdapter(context: Context): RecyclerView.Adapter<CardStackAdapter.
       fun bind(user: User) {
          val context = binding.root.context
          currUser = user
-      
-         Glide.with(context)
+         
+         GlideApp.with(context)
             .load(user.picture)
             .into(binding.ivAvatar)
    
@@ -83,31 +81,26 @@ class CardStackAdapter(context: Context): RecyclerView.Adapter<CardStackAdapter.
             lastSelectedIcon?.toggleSelected()
             selectedIcon.toggleSelected()
             
-            val newIndex = binding.icContainer.indexOfChild(selectedIcon)
             val context = selectedIcon.context
-            when (newIndex) {
-               0 -> {
+            when (selectedIcon.id) {
+               R.id.iv_name -> {
                   binding.tvTitle.text = context.getString(R.string.name_title)
                   binding.tvSubTitle.text = context.getString(R.string.name_display_placeholders,
                      user.name.first.capitalize(), user.name.last.capitalize())
                }
-   
-               1 -> {
+               R.id.iv_dob -> {
                   binding.tvTitle.text = context.getString(R.string.dob_title)
                   binding.tvSubTitle.text = user.dob
                }
-   
-               2 -> {
+               R.id.iv_address -> {
                   binding.tvTitle.text = context.getString(R.string.address_title)
                   binding.tvSubTitle.text = user.location.street
                }
-   
-               3 -> {
+               R.id.iv_phone -> {
                   binding.tvTitle.text = context.getString(R.string.phone_title)
                   binding.tvSubTitle.text = user.phone
                }
-               
-               4 -> {
+               R.id.iv_password -> {
                   binding.tvTitle.text = context.getString(R.string.password_title)
                   binding.tvSubTitle.text = user.password
                }
